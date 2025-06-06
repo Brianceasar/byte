@@ -21,6 +21,12 @@ public class AuthController {
         String message = authService.register(request);
         return ResponseEntity.ok(message);
     }
+    @PostMapping("/register-admin")
+    public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest request) {
+        String message = authService.registerAdmin(request);
+        return ResponseEntity.ok(message);
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {

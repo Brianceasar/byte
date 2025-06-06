@@ -59,6 +59,20 @@ public class AuthService {
         userRepository.save(user);
         return "User registered successfully";
     }
+    public String registerAdmin(RegisterRequest request) {
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        throw new RuntimeException("User already exists");
+    }
+
+    User admin = new User();
+    admin.setEmail(request.getEmail());
+    admin.setPassword(passwordEncoder.encode(request.getPassword()));
+    admin.setRole(Role.ADMIN);  
+
+    userRepository.save(admin);
+    return "Admin registered successfully";
+    }
+
 
     public AuthResponse login(LoginRequest request) {
         // Validate input
