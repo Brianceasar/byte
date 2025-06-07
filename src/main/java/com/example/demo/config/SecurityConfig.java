@@ -39,7 +39,7 @@ public SecurityConfig(JwtFilter jwtFilter, UserDetailsServiceImpl userDetailsSer
             .anyRequest().authenticated()
         )
         .userDetailsService(userDetailsService)
-        // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
 }
     @Bean

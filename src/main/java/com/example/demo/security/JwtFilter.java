@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.*;
@@ -33,9 +32,8 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getServletPath();
-        System.out.println("Requested path: " + path);
+        System.out.println("🛣️ Requested path: " + path); // 🆕 Log path
 
-        // Always skip /auth/** routes — including /auth/login and /auth/register
         if (path.startsWith("/auth")) {
             filterChain.doFilter(request, response);
             return;
@@ -44,6 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         String token = null;
         String email = null;
+
+        System.out.println("🧾 Header: " + authHeader); // 🆕 Log header
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
@@ -54,8 +54,8 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             if (jwtUtil.validateToken(token)) {
-                System.out.println("JWT validated for: " + email);
-                System.out.println("Authorities: " + userDetails.getAuthorities());
+                System.out.println("✅ JWT validated for: " + email); // 🆕
+                System.out.println("✅ Authorities from DB: " + userDetails.getAuthorities()); // 🆕
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
@@ -64,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
-                System.out.println("JWT validation failed for: " + email);
+                System.out.println("❌ JWT validation failed for: " + email); // 🆕
             }
         }
 
