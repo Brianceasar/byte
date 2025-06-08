@@ -10,6 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -59,20 +62,20 @@ public class AuthService {
         userRepository.save(user);
         return "User registered successfully";
     }
+    
     public String registerAdmin(RegisterRequest request) {
-    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-        throw new RuntimeException("User already exists");
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("User already exists");
+        }
+
+        User admin = new User();
+        admin.setEmail(request.getEmail());
+        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.setRole(Role.ADMIN);  
+
+        userRepository.save(admin);
+        return "Admin registered successfully";
     }
-
-    User admin = new User();
-    admin.setEmail(request.getEmail());
-    admin.setPassword(passwordEncoder.encode(request.getPassword()));
-    admin.setRole(Role.ADMIN);  
-
-    userRepository.save(admin);
-    return "Admin registered successfully";
-    }
-
 
     public AuthResponse login(LoginRequest request) {
         // Validate input
@@ -91,6 +94,14 @@ public class AuthService {
                     request.getPassword()
                 )
             );
+
+            // Find the user after successful authentication
+            Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+            if (!userOptional.isPresent()) {
+                throw new IllegalArgumentException("User not found");
+            }
+            
+            User user = userOptional.get();
 
             // Generate token
             String token = jwtUtil.generateToken(user.getEmail(), List.of("ROLE_" + user.getRole().name()));
