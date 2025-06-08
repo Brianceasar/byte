@@ -11,6 +11,8 @@ interface AuthContextType {
   token: string | null
   login: (email: string, password: string) => Promise<void>
   logout: () => void
+  hasRole: (role: string) => boolean
+  isAuthenticated: () => boolean
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
@@ -23,9 +25,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const stored = localStorage.getItem('token')
     if (stored) {
-      setToken(stored)
-      const decoded = jwtDecode<DecodedToken>(stored)
-      setUser(decoded)
+      try {
+        setToken(stored)
+        const decoded = jwtDecode<DecodedToken>(stored)
+        setUser(decoded)
+      } catch (error) {
+        console.error('Error decoding token:', error)
+        localStorage.removeItem('token')
+      }
     }
   }, [])
 
@@ -36,7 +43,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(receivedToken)
     const decoded = jwtDecode<DecodedToken>(receivedToken)
     setUser(decoded)
-    router.push('/')
+    
+    // Role-based redirect
+    const isAdmin = decoded.authorities?.includes('ROLE_ADMIN')
+    if (isAdmin) {
+      router.push('/dashboard/admin')
+    } else {
+      router.push('/dashboard')
+    }
   }
 
   const logout = () => {
@@ -46,8 +60,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/auth/login')
   }
 
+  const hasRole = (role: string): boolean => {
+    return user?.authorities?.includes(role) || false
+  }
+
+  const isAuthenticated = (): boolean => {
+    return !!token && !!user
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      token, 
+      login, 
+      logout, 
+      hasRole, 
+      isAuthenticated 
+    }}>
       {children}
     </AuthContext.Provider>
   )
