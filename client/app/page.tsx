@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 
 const Home = () => {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
 
   return (
     <main className="p-6">
