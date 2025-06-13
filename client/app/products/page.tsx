@@ -5,16 +5,27 @@ import axios from '@/lib/axios'
 import { Product } from '../types'
 import { useCart } from '@/context/CartContext'
 import toast from 'react-hot-toast'
+import { useAuth } from '@/context/AuthContext'
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([])
   const [search, setSearch] = useState('')
   const { addToCart } = useCart()
+  const { user } = useAuth()
+
+  const handleAddToCart = (product: Product) => {
+  if (!user) {
+    toast.error('Please log in to add to cart')
+    return
+  }
+  addToCart(product)
+  toast.success('Added to cart')
+}
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('/products')
-      setProducts(res.data)
+      const response = await axios.get('/products')
+      setProducts(response.data)
     } catch {
       toast.error('Failed to load products')
     }
@@ -48,10 +59,10 @@ const ProductsPage = () => {
             <div key={product.id} className="border rounded p-4 shadow-sm">
               <h2 className="text-lg font-semibold">{product.name}</h2>
               <p className="text-sm text-gray-600 mb-2">{product.description}</p>
-              <p className="font-bold mb-2">${product.price}</p>
+              <p className="font-bold mb-2">Tsh{product.price}</p>
               <button
                 onClick={() => {
-                  addToCart(product)
+                  handleAddToCart(product)
                   toast.success('Added to cart')
                 }}
                 className="bg-blue-600 text-white px-4 py-2 rounded"
