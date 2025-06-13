@@ -1,5 +1,5 @@
 export interface DecodedToken {
-    sub: string; // User email or ID
+    sub: string; // User email 
     authorities: string[]; // User roles 
     exp: number; // Expiration timestamp
     iat?: number;
