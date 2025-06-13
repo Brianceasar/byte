@@ -34,7 +34,7 @@ const ProductsPage = () => {
       toast.success('Product added!')
       setShowDrawer(false)
       fetchProducts()
-    } catch (err) {
+    } catch {
       toast.error('Failed to add product')
     }
   }
@@ -49,7 +49,7 @@ const ProductsPage = () => {
       setEditProduct(null)
       setShowDrawer(false)
       fetchProducts()
-    } catch (err) {
+    } catch {
       toast.error('Failed to update product')
     }
   }
@@ -62,7 +62,7 @@ const ProductsPage = () => {
       })
       toast.success('Product deleted!')
       fetchProducts()
-    } catch (err) {
+    } catch{
       toast.error('Failed to delete product')
     }
   }
@@ -83,8 +83,19 @@ const ProductsPage = () => {
   }
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('/products', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setProducts(response.data)
+      } catch (err) {
+        toast.error('Failed to fetch products')
+        console.error(err)
+      }
+    }
     fetchProducts()
-  }, [])
+  }, [token])
 
   return (
     <div>
