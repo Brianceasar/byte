@@ -47,6 +47,12 @@ const Navbar = () => {
                   <User size={16} />
                   <span className="text-sm text-gray-600">{user.sub}</span>
                 </div>
+                <Link 
+                  href="/cart" 
+                  className="text-sm text-blue-600 hover:underline">
+                    Cart
+                </Link>
+
                 
                 <button
                   onClick={logout}
