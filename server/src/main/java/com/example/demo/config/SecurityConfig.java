@@ -44,7 +44,7 @@ public SecurityConfig(JwtFilter jwtFilter, UserDetailsServiceImpl userDetailsSer
             .requestMatchers(
                 "/auth/**", 
                 "/products/**",
-                "/"
+                "/"                feat: update                feat: update
                 ).permitAll()
             .anyRequest().authenticated()
         )
