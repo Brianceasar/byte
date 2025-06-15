@@ -15,7 +15,9 @@ const OrdersPage = () => {
     if (!token) return
 
     axios.get(`/orders/user?email=${user?.sub || user?.sub}`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: {
+         Authorization: `Bearer ${token}`
+        },
     })
     .then(res => setOrders(res.data))
     .catch(() => console.error('Failed to fetch orders'))

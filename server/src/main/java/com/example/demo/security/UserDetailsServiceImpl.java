@@ -25,8 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         String roleName = "ROLE_" + user.getRole().name();
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleName);
 
-        System.out.println("👤 Loaded user: " + user.getEmail() + " | role: " + user.getRole()); // 🆕
-        System.out.println("🔐 Mapped authority: " + authority.getAuthority()); // 🆕
+        System.out.println(" Loaded user: " + user.getEmail() + " | role: " + user.getRole()); // 🆕
+        System.out.println(" Mapped authority: " + authority.getAuthority()); // 🆕
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

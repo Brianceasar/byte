@@ -46,6 +46,7 @@ public SecurityConfig(JwtFilter jwtFilter, UserDetailsServiceImpl userDetailsSer
                 "/products/**",
                 "/"                
                 ).permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         )
         .userDetailsService(userDetailsService)

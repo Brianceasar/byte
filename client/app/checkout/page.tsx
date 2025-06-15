@@ -1,6 +1,7 @@
 'use client'
 
 import { useCart } from '@/context/CartContext'
+import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -11,36 +12,38 @@ const CheckoutPage = () => {
   const { cart, clearCart } = useCart()
   const [showModal, setShowModal] = useState(false)
   const router = useRouter()
+  const { user } = useAuth()
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-  const handlePlaceOrder = () => {
-    if (cart.length === 0) {
-      toast.error('Your cart is empty')
-      return
-    }
+  const handlePlaceOrder = async () => {
+  if (cart.length === 0) {
+    toast.error('Your cart is empty')
+    return
+  }
 
-    try {
-      const response = await axios.post('/orders', {
-        userEmail: user?.sub || user?.email,
-        total,
-        items: cart.map(item => ({
-          productName: item.name,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-      })
-    
+  try {
+    const response = await axios.post('/orders', {
+      
+      userEmail: user?.sub || user?.sub,
+      total,
+      items: cart.map(item => ({
+        productName: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    })
+    console.log('Order response:', response.data)
 
     toast.success('Order placed successfully!')
     clearCart()
     setShowModal(true)
-  } catch (error) {
-      console.error('Error placing order:', error)
-      toast.error('Failed to place order. Please try again.')
-    }
+  } catch (err) {
+    console.error('Order error:', err)
+    toast.error('Failed to place order')
   }
-  
+}
+
 
 
   return (
