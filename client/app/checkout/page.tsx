@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import ThankYouModal from '@/components/ThankYouModal'
+import axios from 'axios'
 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart()
@@ -19,10 +20,28 @@ const CheckoutPage = () => {
       return
     }
 
+    try {
+      const response = await axios.post('/orders', {
+        userEmail: user?.sub || user?.email,
+        total,
+        items: cart.map(item => ({
+          productName: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      })
+    
+
     toast.success('Order placed successfully!')
     clearCart()
     setShowModal(true)
+  } catch (error) {
+      console.error('Error placing order:', error)
+      toast.error('Failed to place order. Please try again.')
+    }
   }
+  
+
 
   return (
     <div className="max-w-2xl mx-auto">
