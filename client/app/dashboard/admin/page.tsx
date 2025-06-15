@@ -5,23 +5,47 @@ import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Package, Users, ShoppingCart, BarChart3 } from 'lucide-react'
+import axios from '@/lib/axios'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+
 
 const AdminDashboard = () => {
   const { user, token } = useAuth()
   const router = useRouter()
+  const [stats, setStats] = useState({
+  totalUsers: 0,
+  totalProducts: 0,
+  totalOrders: 0,
+})
+
 
   useEffect(() => {
-    if (!token) {
-      router.push('/auth/login')
-      return
-    }
+  if (!token) {
+    router.push('/auth/login')
+    return
+  }
 
-    const isAdmin = user?.authorities?.includes('ROLE_ADMIN')
+  const isAdmin = user?.authorities?.includes('ROLE_ADMIN')
+  if (!isAdmin) {
+    router.push('/unauthorized')
+    return
+  }
 
-    if (!isAdmin) {
-      router.push('/unauthorized')
-    }
-  }, [user, token, router])
+  axios
+    .get('/admin/stats', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      setStats(res.data)
+    })
+    .catch(() => {
+      toast.error('Failed to load dashboard stats')
+    })
+}, [user, token, router])
+
 
   const adminActions = [
     {
@@ -101,7 +125,8 @@ const AdminDashboard = () => {
                   <Package className="text-blue-600" size={20} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600">Total Products</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.totalProducts}</p>
+
                   <p className="text-2xl font-semibold text-gray-900">-</p>
                 </div>
               </div>
@@ -113,7 +138,8 @@ const AdminDashboard = () => {
                   <Users className="text-green-600" size={20} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600">Total Users</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.totalUsers}</p>
+
                   <p className="text-2xl font-semibold text-gray-900">-</p>
                 </div>
               </div>
@@ -125,7 +151,8 @@ const AdminDashboard = () => {
                   <ShoppingCart className="text-purple-600" size={20} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600">Pending Orders</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.totalOrders}</p>
+
                   <p className="text-2xl font-semibold text-gray-900">-</p>
                 </div>
               </div>
