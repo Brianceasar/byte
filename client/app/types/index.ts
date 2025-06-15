@@ -12,3 +12,16 @@ export interface Product {
   price: number
   stock: number
 }
+export type OrderItem = {
+  id: string | number
+  productName: string
+  quantity: number
+  price: number
+}
+
+export type Order = {
+  id: string | number
+  createdAt: string
+  total: number
+  items: OrderItem[]
+}
