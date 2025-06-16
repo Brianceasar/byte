@@ -52,3 +52,4 @@ application-prod.properties
 *.jar
 *.war
 *.ear
+target/
