@@ -37,13 +37,13 @@ public class ProductService {
 
     public ProductResponse getById(Long id) {
         Product product = productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
         return toResponse(product);
     }
 
     public ProductResponse update(Long id, ProductRequest request) {
         Product product = productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         product.setName(request.getName());
         product.setDescription(request.getDescription());
@@ -54,6 +54,9 @@ public class ProductService {
     }
 
     public void delete(Long id) {
+        if (!productRepo.existsById(id)) {
+            throw new ProductNotFoundException("Product not found");
+        }
         productRepo.deleteById(id);
     }
 
