@@ -31,6 +31,14 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
+    private User createUser(String email, String password, Role role) {
+        User user = new User();
+        user.setEmail(email.toLowerCase().trim());
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole(role);
+        return user;
+    }
+
     @Transactional
     public String register(RegisterRequest request) {
         // Validate input
@@ -52,27 +60,17 @@ public class AuthService {
             throw new IllegalArgumentException("User already exists with this email");
         }
 
-        // Create and save user
-        User user = new User(
-            request.getEmail().toLowerCase().trim(),
-            passwordEncoder.encode(request.getPassword()),
-            Role.USER
-        );
-
+        User user = createUser(request.getEmail(), request.getPassword(), Role.USER);
         userRepository.save(user);
         return "User registered successfully";
     }
     
     public String registerAdmin(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("User already exists");
         }
 
-        User admin = new User();
-        admin.setEmail(request.getEmail());
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
-        admin.setRole(Role.ADMIN);  
-
+        User admin = createUser(request.getEmail(), request.getPassword(), Role.ADMIN);
         userRepository.save(admin);
         return "Admin registered successfully";
     }

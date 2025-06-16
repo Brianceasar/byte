@@ -25,8 +25,8 @@ public class ProductController {
     public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest request) {
         // Debug roles
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("🟢 Auth User: " + auth.getName());
-        System.out.println("🟢 Auth Roles: " + auth.getAuthorities());
+        System.out.println("Auth User: " + auth.getName());
+        System.out.println("Auth Roles: " + auth.getAuthorities());
 
         return ResponseEntity.ok(productService.create(request));
     }

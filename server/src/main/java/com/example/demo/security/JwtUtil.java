@@ -15,6 +15,8 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
+    private static final String AUTHORITIES_KEY = "authorities";
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -30,7 +32,7 @@ public class JwtUtil {
 
     public String generateToken(String email, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authorities", roles);
+        claims.put(AUTHORITIES_KEY, roles);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -58,6 +60,7 @@ public class JwtUtil {
                     .parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            // Optionally log the exception here
             return false;
         }
     }
