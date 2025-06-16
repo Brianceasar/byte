@@ -7,6 +7,14 @@ public class OrderRequest {
     private double total;
     private List<OrderItemRequest> items;
 
+    public OrderRequest() {}
+
+    public OrderRequest(String userEmail, double total, List<OrderItemRequest> items) {
+        this.userEmail = userEmail;
+        this.total = total;
+        this.items = items;
+    }
+
     public String getUserEmail() {
         return userEmail;
     }
