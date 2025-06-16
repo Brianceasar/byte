@@ -18,13 +18,8 @@ public class OrderService {
         this.orderRepo = orderRepo;
     }
 
-    public Order saveOrder(OrderRequest request) {
-        Order order = new Order();
-        order.setUserEmail(request.getUserEmail());
-        order.setCreatedAt(new Date());
-        order.setTotal(request.getTotal());
-
-        List<OrderItem> items = request.getItems().stream().map(i -> {
+    private List<OrderItem> mapToOrderItems(List<OrderItemRequest> itemRequests, Order order) {
+        return itemRequests.stream().map(i -> {
             OrderItem item = new OrderItem();
             item.setProductName(i.getProductName());
             item.setQuantity(i.getQuantity());
@@ -32,7 +27,15 @@ public class OrderService {
             item.setOrder(order);
             return item;
         }).toList();
+    }
 
+    public Order saveOrder(OrderRequest request) {
+        Order order = new Order();
+        order.setUserEmail(request.getUserEmail());
+        order.setCreatedAt(new Date());
+        order.setTotal(request.getTotal());
+
+        List<OrderItem> items = mapToOrderItems(request.getItems(), order);
         order.setItems(items);
         return orderRepo.save(order);
     }
