@@ -19,10 +19,10 @@ public class AdminStatsController {
     private final ProductRepository productRepo;
     private final OrderRepository orderRepo;
 
-    public AdminStatsController(UserRepository u, ProductRepository p, OrderRepository o) {
-        this.userRepo = u;
-        this.productRepo = p;
-        this.orderRepo = o;
+    public AdminStatsController(UserRepository userRepo, ProductRepository productRepo, OrderRepository orderRepo) {
+        this.userRepo = userRepo;
+        this.productRepo = productRepo;
+        this.orderRepo = orderRepo;
     }
 
     @GetMapping("/stats")
