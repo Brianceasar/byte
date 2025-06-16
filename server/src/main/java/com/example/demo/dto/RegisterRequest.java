@@ -5,23 +5,14 @@ public class RegisterRequest {
     private String password;
     private String confirmPassword;
 
-    // Default constructor
     public RegisterRequest() {}
 
-    // Constructor with all fields
     public RegisterRequest(String email, String password, String confirmPassword) {
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
 
-    // Constructor without confirm password
-    public RegisterRequest(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    // Getters and Setters
     public String getEmail() {
         return email;
     }
